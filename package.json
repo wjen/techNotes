@@ -1,0 +1,27 @@
+{
+  "name": "technotes",
+  "version": "1.0.0",
+  "description": "techNotes",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wjen/techNotes.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wjen/techNotes/issues"
+  },
+  "homepage": "https://github.com/wjen/techNotes#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
