@@ -30,7 +30,7 @@ const getAllNotes = asyncHandler(async (req, res) => {
 // @desc Create new note
 // @route POST /notes
 // @access Private
-const createNote = asyncHandler(async (req, res) => {
+const createNewNote = asyncHandler(async (req, res) => {
     const { user, title, text } = req.body;
 
     // Confirm data
@@ -56,14 +56,14 @@ const createNote = asyncHandler(async (req, res) => {
     }
 });
 
-//@desc Update Note
-//@route PATCH /notes
-//@access Private
+// @desc Update a note
+// @route PATCH /notes
+// @access Private
 const updateNote = asyncHandler(async (req, res) => {
-    const { user, title, text, completed, id } = req.body;
+    const { id, user, title, text, completed } = req.body;
 
     // Confirm data
-    if (!user || !title || !text || !id || typeof completed !== 'boolean') {
+    if (!id || !user || !title || !text || typeof completed !== 'boolean') {
         return res.status(400).json({ message: 'All fields are required' });
     }
 
@@ -71,13 +71,15 @@ const updateNote = asyncHandler(async (req, res) => {
     const note = await Note.findById(id).exec();
 
     if (!note) {
-        return res.status(400).json({ message: 'No note found' });
+        return res.status(400).json({ message: 'Note not found' });
     }
 
-    // Check for duplicate
+    // Check for duplicate title
     const duplicate = await Note.findOne({ title }).lean().exec();
+
+    // Allow renaming of the original note
     if (duplicate && duplicate?._id.toString() !== id) {
-        return res.status(409).json({ message: 'Duplicate note title exists' });
+        return res.status(409).json({ message: 'Duplicate note title' });
     }
 
     note.user = user;
@@ -90,9 +92,9 @@ const updateNote = asyncHandler(async (req, res) => {
     res.json(`'${updatedNote.title}' updated`);
 });
 
-//@desc Delete Note
-//@route DELETE /notes
-//@access Private
+// @desc Delete a note
+// @route DELETE /notes
+// @access Private
 const deleteNote = asyncHandler(async (req, res) => {
     const { id } = req.body;
 
@@ -114,4 +116,10 @@ const deleteNote = asyncHandler(async (req, res) => {
 
     res.json(reply);
 });
-module.exports = { getAllNotes, createNote, updateNote, deleteNote };
+
+module.exports = {
+    getAllNotes,
+    createNewNote,
+    updateNote,
+    deleteNote,
+};
