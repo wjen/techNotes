@@ -1,12 +1,11 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const asyncHandler = require('express-async-handler');
 
 // @desc Login
 // @route POST /auth
 // @access Public
-const login = asyncHandler(async (req, res) => {
+const login = async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
         return res.status(400).json({ message: 'All fields required' });
@@ -50,30 +49,22 @@ const login = asyncHandler(async (req, res) => {
 
     // Send accessToken containing username and roles
     res.json({ accessToken });
-});
+};
 
 // @desc Refresh
 // @route GET /auth/refresh
 // @access Public - because access token has expired
 const refresh = (req, res) => {
     const cookies = req.cookies;
-    console.log(
-        '🚀 ~ file: authController.js:60 ~ refresh ~ cookies:',
-        cookies
-    );
 
     if (!cookies?.jwt) return res.status(401).json({ message: 'Unauthorized' });
 
     const refreshToken = cookies.jwt;
-    console.log(
-        '🚀 ~ file: authController.js:64 ~ refresh ~ refreshToken:',
-        refreshToken
-    );
 
     jwt.verify(
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET,
-        asyncHandler(async (err, decoded) => {
+        async (err, decoded) => {
             if (err) return res.status(403).json({ message: 'Forbidden' });
 
             const foundUser = await User.findOne({
@@ -95,7 +86,7 @@ const refresh = (req, res) => {
             );
 
             res.json({ accessToken });
-        })
+        }
     );
 };
 
